@@ -1,45 +1,48 @@
 import React, { useState } from 'react';
-import { supabase } from '../supabase'; // supabase.jsをインポートして使用する
+import { useAuth } from '../contexts/AuthContext'; // AuthContextからuseAuthをインポート
+import { useNavigate } from 'react-router-dom'; // useNavigateをインポート
 
 function Login() {
-  const [email, setEmail] = useState('');
+  const { login } = useAuth(); // useAuth()からlogin関数を取得
+  const navigate = useNavigate(); // useNavigateフックを使用してページ遷移
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => {
-    console.log('ログインボタンが押されました'); // ログインボタンが押されたことを確認するためのログ
-
-    try {
-      let { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        console.error('ログインに失敗しました:', error.message); // エラー時のログ出力
-      } else {
-        console.log('ログイン成功:', data); // ログイン成功時のログ出力
-        // 成功したら他のページにリダイレクトする（例: ダッシュボード）
-      }
-    } catch (error) {
-      console.error('ログイン中にエラーが発生しました:', error); // 例外が発生した際のログ出力と思う
+  const handleLogin = () => {
+    // ここで認証処理を行う
+    if (username === '' || password === '') {
+      alert('ユーザー名とパスワードを入力してください');
+      return;
     }
+
+    // ログイン成功処理
+    login(); // 認証状態を更新
+    navigate('/'); // ホームページに遷移
   };
 
   return (
     <div>
       <h2>ログインページ</h2>
-      <input
-        type="email"
-        placeholder="メールアドレス"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="パスワード"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+      <div>
+        <label htmlFor="username">ユーザー名:</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+      </div>
+      <div>
+        <label htmlFor="password">パスワード:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
       <button onClick={handleLogin}>ログイン</button>
     </div>
   );

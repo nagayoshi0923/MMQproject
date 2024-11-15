@@ -1,18 +1,38 @@
-import React from 'react';
-import Header from './components/Header';
-import Login from './components/Login'; // ログインコンポーネントのインポート
+import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext"; // AuthProviderをインポート
+import Home from "./components/Home";
+import Login from "./components/Login";
+import NotFoundPage from "./components/NotFoundPage";
+
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <Home />,
+    },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "*",
+      element: <NotFoundPage />,
+    },
+  ],
+  {
+    future: {
+      v7_relativeSplatPath: true,
+    },
+  }
+);
 
 function App() {
-    return (
-        <div className="App">
-            <Header />
-            <main>
-                <Login />  {/* ログインコンポーネントを表示する */}
-                <h1>ようこそ！私たちの予約サイトへ</h1>
-                {/* 他のコンテンツをここに追加 */}
-            </main>
-        </div>
-    );
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 }
 
 export default App;
